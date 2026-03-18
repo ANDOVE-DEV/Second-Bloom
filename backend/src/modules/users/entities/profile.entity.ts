@@ -83,6 +83,12 @@ export class Profile {
   @Column({ name: 'avatar_url', length: 500, nullable: true })
   avatarUrl!: string | null;
 
+  @Column({ name: 'is_invisible', default: false })
+  isInvisible!: boolean;
+
+  @Column({ name: 'onboarding_completed', default: false })
+  onboardingCompleted!: boolean;
+
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 }

@@ -8,10 +8,16 @@ import { AffinityService } from './affinity.service';
 import { MatchingCacheService } from './matching-cache.service';
 import { MatchingController } from './matching.controller';
 import { MatchingService } from './matching.service';
+import { MatchingProcessor } from './matching.processor';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Swipe, Match, Profile]), UsersModule],
+  imports: [
+    TypeOrmModule.forFeature([Swipe, Match, Profile]),
+    BullModule.registerQueue({ name: 'matching' }),
+    UsersModule
+  ],
   controllers: [MatchingController],
-  providers: [MatchingService, AffinityService, MatchingCacheService],
+  providers: [MatchingService, AffinityService, MatchingCacheService, MatchingProcessor],
 })
 export class MatchingModule {}

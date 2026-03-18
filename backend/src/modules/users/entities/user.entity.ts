@@ -19,6 +19,9 @@ export class User {
   @Column({ name: 'password_hash', length: 255 })
   passwordHash!: string;
 
+  @Column({ length: 10, default: 'user' })
+  role!: 'user' | 'admin';
+
   @Column({ name: 'is_active', default: true })
   isActive!: boolean;
 

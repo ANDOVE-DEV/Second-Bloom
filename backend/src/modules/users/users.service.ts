@@ -117,4 +117,27 @@ export class UsersService {
 			profile: updated,
 		};
 	}
+
+	async softDeleteUser(userId: string) {
+		await this.usersRepository.update(userId, { isActive: false });
+		return { success: true };
+	}
+
+	async exportUserData(userId: string) {
+		const user = await this.usersRepository.findOne({ where: { id: userId } });
+		const profile = await this.profilesRepository.findOne({ where: { userId } });
+		// Usually includes messages, swipes etc. depending on business logic
+		return { user, profile };
+	}
+
+	async updateAvatar(userId: string, avatarUrl: string) {
+		await this.profilesRepository.update(userId, { avatarUrl });
+		return { success: true, avatarUrl };
+	}
+
+	async updateVisibility(userId: string, isInvisible: boolean) {
+		// Would typically check for Gold tier here first
+		await this.profilesRepository.update(userId, { isInvisible });
+		return { success: true, isInvisible };
+	}
 }
