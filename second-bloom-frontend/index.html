@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Second Bloom</title>
+  
+  <!-- SEO Best Practices -->
+  <meta name="description" content="Second Bloom - L'app di incontri sicura e accessibile per ritrovare l'amore.">
+  
+  <!-- Font Setup -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./style.css">
+  
+  <!-- Feather Icons (Lucide alternative for vanilla) -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  
+  <!-- Socket.io Client -->
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <h1 class="logo">Second Bloom<span style="color:var(--primary-color);">.</span></h1>
+      <span id="page-title" class="page-title">Scopri</span>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+      <!-- Pages will be injected here -->
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="discover" aria-label="Scopri Profili">
+        <i data-feather="users"></i>
+        <span>Scopri</span>
+      </button>
+      <button class="nav-item" data-tab="messages" aria-label="Messaggi e Chat">
+        <div class="icon-wrapper">
+          <i data-feather="message-circle"></i>
+          <span class="badge" id="msg-badge" style="display:none">2</span>
+        </div>
+        <span>Messaggi</span>
+      </button>
+      <button class="nav-item" data-tab="profile" aria-label="Il Mio Profilo">
+        <i data-feather="user"></i>
+        <span>Profilo</span>
+      </button>
+      <button class="nav-item" data-tab="help" aria-label="Aiuto e Sicurezza">
+        <i data-feather="shield"></i>
+        <span>Sicurezza</span>
+      </button>
+    </nav>
+    
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

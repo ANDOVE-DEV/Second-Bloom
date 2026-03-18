@@ -1,0 +1,492 @@
+:root {
+  /* Premium High Contrast Color Palette - Facebook Style */
+  --bg-color: #F0F2F5;
+  --text-main: #050505;
+  --text-muted: #65676B;
+  
+  --primary-color: #1877F2; /* Facebook Blue */
+  --primary-hover: #166FE5;
+  
+  --secondary-color: #E4E6EB; /* Facebook Gray */
+  --secondary-hover: #D8DADF;
+  --secondary-text: #050505;
+  
+  --danger-color: #FA383E; /* Facebook Error Red */
+  --danger-bg: #FFEBEE;
+  
+  --accent-color: #FFB300; /* Premium Gold */
+  
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --nav-active: #1877F2;
+  --nav-inactive: #65676B;
+  
+  --border-color: #CED0D4;
+  --card-bg: #FFFFFF;
+  
+  /* Modern soft shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08); /* Lighter FB shadows */
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px rgba(24, 119, 242, 0.3); /* Blue glow */
+  
+  /* Glassmorphism effects */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-blur: blur(12px);
+  
+  /* Typography - Accessible but elegant */
+  --font-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --text-base-size: 18px; /* Strict requirement */
+  --text-lg-size: 22px;
+  --text-xl-size: 32px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-base);
+  font-size: var(--text-base-size);
+  color: var(--text-main);
+  background-color: var(--bg-color);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base Layout Container (Mobile Frame on Desktop) */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: var(--bg-color);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Header - Glassmorphism */
+.app-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--primary-color); /* Flat Blue for FB style */
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Main Content Area */
+#main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px 100px 20px;
+  scroll-behavior: smooth;
+}
+
+/* Bottom Nav - Premium Floating Box */
+.bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: var(--nav-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-top: 1px solid rgba(255,255,255,0.8);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom); /* iOS support */
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--nav-inactive);
+  gap: 8px;
+  width: 25%;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-item i {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.3s ease;
+}
+
+.nav-item span {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.nav-item.active {
+  color: var(--nav-active);
+}
+
+.nav-item.active i {
+  transform: translateY(-4px) scale(1.1);
+  color: var(--primary-color);
+  filter: drop-shadow(0 4px 6px rgba(24,119,242,0.3));
+}
+.nav-item.active span {
+  opacity: 1;
+}
+
+.icon-wrapper {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: var(--danger-color);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 6px;
+  border-radius: 12px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(211,47,47,0.3);
+}
+
+/* Beautiful Cards */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+  border: 1px solid rgba(255,255,255,0.8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  background: white;
+  border: none;
+}
+
+.profile-image-container {
+  width: 100%;
+  aspect-ratio: 4/5;
+  background-color: var(--border-color);
+  position: relative;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Card Gradient Overlay */
+.profile-image-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+  z-index: 1;
+}
+
+.affinity-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-main);
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(4px);
+}
+
+.profile-info {
+  padding: 24px;
+  text-align: left;
+  border-top: none;
+}
+
+/* Info positioning over the image for modern look */
+.profile-header-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 2;
+  color: white;
+}
+
+.profile-name {
+  font-size: var(--text-xl-size);
+  font-weight: 800;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  color: white;
+}
+
+.profile-meta-overlay {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.profile-description {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Refined Tags */
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.tag {
+  background-color: #F1F5F9;
+  color: var(--text-muted);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1px solid #E2E8F0;
+  transition: background-color 0.2s;
+}
+
+.tag.match {
+  background-color: #FFF8E1;
+  color: #F57F17;
+  border-color: #FFECB3;
+  box-shadow: 0 2px 8px rgba(255, 179, 0, 0.15);
+}
+
+/* Massive Premium Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 0 24px;
+}
+
+.btn-action {
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+}
+
+.btn-action:active {
+  transform: scale(0.9);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-pass {
+  width: 76px;
+  height: 76px;
+  background-color: var(--secondary-color);
+  color: var(--secondary-text);
+  border: none;
+}
+.btn-pass i, .btn-pass svg { width: 32px; height: 32px; stroke-width: 2.5; }
+
+.btn-yes {
+  width: 96px;
+  height: 96px;
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-glow);
+}
+.btn-yes i { width: 44px; height: 44px; stroke-width: 2.5; fill: rgba(255,255,255,0.2); }
+
+.btn-undo {
+  width: 60px;
+  height: 60px;
+  background-color: white;
+  color: var(--text-muted);
+  border: 2px solid var(--border-color);
+}
+.btn-undo i { width: 24px; height: 24px; font-weight: 800; stroke-width: 3; }
+
+/* Gorgeous Generic Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 24px;
+  font-size: var(--text-lg-size);
+  font-weight: 700;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: white;
+}
+.btn-primary:active { transform: translateY(2px); box-shadow: none; }
+
+.btn-secondary {
+  background-color: white;
+  color: var(--text-main);
+  border: 2px solid var(--border-color);
+}
+
+/* Chat List Refinements */
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.chat-list-item:hover { background-color: #F8FAFC; }
+
+.chat-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 34px;
+  object-fit: cover;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-name {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text-main);
+}
+
+.chat-preview {
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Profile Form Modernization */
+.form-group { margin-bottom: 28px; }
+.form-label {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 12px;
+  font-size: 19px;
+  color: var(--text-main);
+}
+
+.form-control {
+  width: 100%;
+  padding: 18px;
+  font-size: 18px;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  font-family: var(--font-base);
+  background-color: #F8FAFC;
+  color: var(--text-main);
+  transition: all 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: white;
+  box-shadow: 0 0 0 4px rgba(24,119,242,0.1);
+}
+
+/* Utilities */
+.text-center { text-align: center; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 32px; }
+.mt-4 { margin-top: 20px; }
+
+/* Vibrant Empty States */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  padding: 40px;
+}
+.empty-state i {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  color: var(--border-color);
+  stroke-width: 1.5;
+}
+.empty-state h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+.empty-state p {
+  font-size: 18px;
+  color: var(--text-muted);
+}
