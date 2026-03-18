@@ -10,6 +10,10 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { VerificationModule } from './modules/verification/verification.module';
+import { CallsModule } from './modules/calls/calls.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -50,6 +54,10 @@ import { ChatModule } from './modules/chat/chat.module';
     UsersModule,
     MatchingModule,
     ChatModule,
+    VerificationModule,
+    CallsModule,
+    PaymentsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
