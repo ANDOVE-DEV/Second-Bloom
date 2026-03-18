@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: second-bloom-postgres
+    environment:
+      POSTGRES_DB: secondbloom
+      POSTGRES_USER: sb_user
+      POSTGRES_PASSWORD: sb_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: second-bloom-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+volumes:
+  pg_data:
+  redis_data:
