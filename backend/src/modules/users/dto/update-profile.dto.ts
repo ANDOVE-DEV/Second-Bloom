@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsIn,
   IsNumber,
@@ -54,4 +55,39 @@ export class UpdateProfileDto {
   @IsArray()
   @IsString({ each: true })
   interests?: string[];
+
+  @IsOptional()
+  @IsIn(['convivenza', 'relazione_stabile', 'amicizia', 'vediamo'])
+  intent?: 'convivenza' | 'relazione_stabile' | 'amicizia' | 'vediamo';
+
+  @IsOptional()
+  @IsBoolean()
+  smokes?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  hasCohabitingKids?: boolean;
+
+  @IsOptional()
+  @IsIn(['left', 'center', 'right', 'apolitical', 'prefer_not'])
+  politicalLean?: 'left' | 'center' | 'right' | 'apolitical' | 'prefer_not';
+
+  @IsOptional()
+  @IsIn([
+    'christian',
+    'jewish',
+    'muslim',
+    'buddhist',
+    'atheist',
+    'other',
+    'prefer_not',
+  ])
+  religion?:
+    | 'christian'
+    | 'jewish'
+    | 'muslim'
+    | 'buddhist'
+    | 'atheist'
+    | 'other'
+    | 'prefer_not';
 }

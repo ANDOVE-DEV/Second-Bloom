@@ -22,6 +22,10 @@ export class UsersService {
 		return this.usersRepository.findOne({ where: { email } });
 	}
 
+	findProfileByUserId(userId: string) {
+		return this.profilesRepository.findOne({ where: { userId } });
+	}
+
 	async getMe(userId: string) {
 		const user = await this.usersRepository.findOne({ where: { id: userId } });
 
@@ -84,6 +88,26 @@ export class UsersService {
 
 		if (dto.interests !== undefined) {
 			profile.interests = dto.interests;
+		}
+
+		if (dto.intent !== undefined) {
+			profile.intent = dto.intent;
+		}
+
+		if (dto.smokes !== undefined) {
+			profile.smokes = dto.smokes;
+		}
+
+		if (dto.hasCohabitingKids !== undefined) {
+			profile.hasCohabitingKids = dto.hasCohabitingKids;
+		}
+
+		if (dto.politicalLean !== undefined) {
+			profile.politicalLean = dto.politicalLean;
+		}
+
+		if (dto.religion !== undefined) {
+			profile.religion = dto.religion;
 		}
 
 		const updated = await this.profilesRepository.save(profile);

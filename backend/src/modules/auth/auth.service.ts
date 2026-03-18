@@ -56,6 +56,12 @@ export class AuthService {
 			latitude: null,
 			longitude: null,
 			interests: [],
+			intent: null,
+			smokes: null,
+			hasCohabitingKids: null,
+			politicalLean: null,
+			religion: null,
+			subscriptionTier: 'free',
 			avatarUrl: null,
 		});
 

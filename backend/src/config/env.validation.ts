@@ -1,6 +1,7 @@
 export interface Env {
   PORT: number;
   DATABASE_URL: string;
+  REDIS_URL?: string;
   JWT_ACCESS_SECRET: string;
   JWT_REFRESH_SECRET: string;
   JWT_ACCESS_EXPIRES_IN: string;
@@ -26,6 +27,7 @@ export function validateEnv(config: Record<string, unknown>): Env {
   return {
     PORT: port,
     DATABASE_URL: required('DATABASE_URL', config.DATABASE_URL as string | undefined),
+    REDIS_URL: config.REDIS_URL as string | undefined,
     JWT_ACCESS_SECRET: required(
       'JWT_ACCESS_SECRET',
       config.JWT_ACCESS_SECRET as string | undefined,

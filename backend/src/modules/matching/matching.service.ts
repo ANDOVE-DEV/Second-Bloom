@@ -1,5 +1,7 @@
 import {
 	BadRequestException,
+	HttpException,
+	HttpStatus,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
@@ -7,14 +9,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { Profile } from '../users/entities/profile.entity';
+import { AffinityService } from './affinity.service';
+import { MatchingCacheService } from './matching-cache.service';
 import { SwipeDto } from './dto/swipe.dto';
 import { Match } from './entities/match.entity';
 import { Swipe } from './entities/swipe.entity';
 
 @Injectable()
 export class MatchingService {
-	private readonly lastSwipeMap = new Map<string, string>();
-
 	constructor(
 		@InjectRepository(Swipe)
 		private readonly swipeRepository: Repository<Swipe>,
@@ -23,52 +25,38 @@ export class MatchingService {
 		@InjectRepository(Profile)
 		private readonly profileRepository: Repository<Profile>,
 		private readonly usersService: UsersService,
+		private readonly affinityService: AffinityService,
+		private readonly cacheService: MatchingCacheService,
 	) {}
 
 	async discover(userId: string) {
 		const me = await this.usersService.findById(userId);
+		const myProfile = await this.usersService.findProfileByUserId(userId);
 
-		if (!me) {
+		if (!me || !myProfile) {
 			throw new NotFoundException('User not found');
 		}
 
-		const swiped = await this.swipeRepository.find({
-			where: { actorId: userId },
-			select: ['targetId'],
-		});
+		let candidateProfile = await this.popCandidateFromQueue(userId);
 
-		const excludedIds = swiped.map((item) => item.targetId);
-
-		const query = this.profileRepository
-			.createQueryBuilder('p')
-			.where('p.user_id != :userId', { userId });
-
-		if (excludedIds.length > 0) {
-			query.andWhere('p.user_id NOT IN (:...excluded)', { excluded: excludedIds });
+		if (!candidateProfile) {
+			await this.rebuildQueue(userId, myProfile);
+			candidateProfile = await this.popCandidateFromQueue(userId);
 		}
 
-		const candidate = await query
-			.orderBy('p.updated_at', 'DESC')
-			.limit(1)
-			.getRawOne<{
-				user_id: string;
-				display_name: string;
-				bio: string | null;
-				city: string | null;
-				avatar_url: string | null;
-			}>();
-
-		if (!candidate) {
+		if (!candidateProfile) {
 			return { candidate: null };
 		}
 
+		await this.cacheService.markSeen(userId, candidateProfile.userId);
+
 		return {
 			candidate: {
-				userId: candidate.user_id,
-				displayName: candidate.display_name,
-				bio: candidate.bio,
-				city: candidate.city,
-				avatarUrl: candidate.avatar_url,
+				userId: candidateProfile.userId,
+				displayName: candidateProfile.displayName,
+				bio: candidateProfile.bio,
+				city: candidateProfile.city,
+				avatarUrl: candidateProfile.avatarUrl,
 			},
 		};
 	}
@@ -84,9 +72,35 @@ export class MatchingService {
 			throw new NotFoundException('Target user not found');
 		}
 
+		const actorProfile = await this.usersService.findProfileByUserId(userId);
+
+		if (!actorProfile) {
+			throw new NotFoundException('Profile not found');
+		}
+
 		let swipe = await this.swipeRepository.findOne({
 			where: { actorId: userId, targetId: dto.targetId },
 		});
+
+		const previousAction = swipe?.action;
+
+		if (actorProfile.subscriptionTier !== 'gold') {
+			if (dto.action === 'yes' && previousAction !== 'yes') {
+				const count = await this.cacheService.incrementDailyYes(userId);
+
+				if (count > 5) {
+					await this.cacheService.decrementDailyYes(userId);
+					throw new HttpException(
+						'Free plan allows up to 5 "yes" actions per day',
+						HttpStatus.TOO_MANY_REQUESTS,
+					);
+				}
+			}
+
+			if (dto.action !== 'yes' && previousAction === 'yes') {
+				await this.cacheService.decrementDailyYes(userId);
+			}
+		}
 
 		if (!swipe) {
 			swipe = this.swipeRepository.create({
@@ -99,8 +113,8 @@ export class MatchingService {
 		}
 
 		const savedSwipe = await this.swipeRepository.save(swipe);
-		this.lastSwipeMap.set(userId, savedSwipe.id);
-
+		await this.cacheService.setUndo(userId, savedSwipe.id);
+		await this.cacheService.markSeen(userId, dto.targetId);
 		let createdMatch: Match | null = null;
 
 		if (dto.action === 'yes') {
@@ -149,7 +163,7 @@ export class MatchingService {
 	}
 
 	async undo(userId: string) {
-		const swipeId = this.lastSwipeMap.get(userId);
+		const swipeId = await this.cacheService.getUndo(userId);
 
 		if (!swipeId) {
 			return {
@@ -166,7 +180,7 @@ export class MatchingService {
 		});
 
 		if (!swipe) {
-			this.lastSwipeMap.delete(userId);
+			await this.cacheService.clearUndo(userId);
 			return {
 				success: false,
 				message: 'No swipe to undo',
@@ -174,7 +188,12 @@ export class MatchingService {
 		}
 
 		await this.swipeRepository.delete({ id: swipe.id });
-		this.lastSwipeMap.delete(userId);
+		await this.cacheService.clearUndo(userId);
+
+		const actorProfile = await this.usersService.findProfileByUserId(userId);
+		if (actorProfile?.subscriptionTier !== 'gold' && swipe.action === 'yes') {
+			await this.cacheService.decrementDailyYes(userId);
+		}
 
 		return {
 			success: true,
@@ -191,5 +210,54 @@ export class MatchingService {
 		return {
 			items: matches,
 		};
+	}
+
+	private async popCandidateFromQueue(userId: string): Promise<Profile | null> {
+		while (true) {
+			const candidateUserId = await this.cacheService.popTopQueue(userId);
+
+			if (!candidateUserId) {
+				return null;
+			}
+
+			const alreadySeen = await this.cacheService.isSeen(userId, candidateUserId);
+			if (alreadySeen) {
+				continue;
+			}
+
+			const profile = await this.profileRepository.findOne({
+				where: { userId: candidateUserId },
+			});
+
+			if (profile) {
+				return profile;
+			}
+		}
+	}
+
+	private async rebuildQueue(userId: string, myProfile: Profile): Promise<void> {
+		const swiped = await this.swipeRepository.find({
+			where: { actorId: userId },
+			select: ['targetId'],
+		});
+
+		const excluded = new Set(swiped.map((item) => item.targetId));
+
+		const candidates = await this.profileRepository
+			.createQueryBuilder('p')
+			.where('p.user_id != :userId', { userId })
+			.limit(200)
+			.getMany();
+
+		const ranked = candidates
+			.filter((candidate) => !excluded.has(candidate.userId))
+			.map((candidate) => ({
+				userId: candidate.userId,
+				score: this.affinityService.calculateScore(myProfile, candidate),
+			}))
+			.sort((a, b) => b.score - a.score)
+			.slice(0, 50);
+
+		await this.cacheService.setQueue(userId, ranked);
 	}
 }

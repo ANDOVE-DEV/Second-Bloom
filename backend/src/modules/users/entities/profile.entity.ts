@@ -44,6 +44,42 @@ export class Profile {
   @Column({ type: 'text', array: true, default: '{}' })
   interests!: string[];
 
+  @Column({
+    type: 'varchar',
+    length: 30,
+    nullable: true,
+    name: 'intent',
+  })
+  intent!: 'convivenza' | 'relazione_stabile' | 'amicizia' | 'vediamo' | null;
+
+  @Column({ nullable: true })
+  smokes!: boolean | null;
+
+  @Column({ name: 'has_cohabiting_kids', nullable: true })
+  hasCohabitingKids!: boolean | null;
+
+  @Column({ type: 'varchar', length: 20, nullable: true, name: 'political_lean' })
+  politicalLean!: 'left' | 'center' | 'right' | 'apolitical' | 'prefer_not' | null;
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  religion!:
+    | 'christian'
+    | 'jewish'
+    | 'muslim'
+    | 'buddhist'
+    | 'atheist'
+    | 'other'
+    | 'prefer_not'
+    | null;
+
+  @Column({
+    name: 'subscription_tier',
+    type: 'varchar',
+    length: 10,
+    default: 'free',
+  })
+  subscriptionTier!: 'free' | 'gold';
+
   @Column({ name: 'avatar_url', length: 500, nullable: true })
   avatarUrl!: string | null;
 
